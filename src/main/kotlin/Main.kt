@@ -20,11 +20,7 @@ fun App() {
     MaterialTheme {
         Column {
             HeaderWithImage()
-            Button(onClick = {
-                text = "Hello!"
-            }) {
-                Text(text)
-            }
+
         }
     }
 }
