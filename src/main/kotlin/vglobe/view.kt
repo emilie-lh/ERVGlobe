@@ -3,8 +3,10 @@ package vglobe
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.BottomDrawer
+import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.useResource
@@ -19,8 +21,11 @@ import androidx.compose.ui.layout.ContentScale
 
 
 @Composable
-fun HeaderWithImage() {
+fun HeaderWithImage(classementParDate:Map<String,List<skipper>>) {
     val image: ImageBitmap = useResource("images/departVG.png") { loadImageBitmap(it) }
+
+    val allDate=classementParDate.keys.sorted()
+    val (currentDate,navigate)=dateNavigation(allDate)
    Column(
        modifier = Modifier.fillMaxSize()
    ) {
@@ -48,7 +53,7 @@ fun HeaderWithImage() {
            )
        }
 
-       Spacer(modifier = Modifier.height(16.dp)) // Espacement entre les blocs
+       Spacer(modifier = Modifier.height(5.dp)) // Espacement entre les blocs
 
        // Section grisée contenant le titre
        Box(
@@ -66,6 +71,29 @@ fun HeaderWithImage() {
                    textAlign = TextAlign.Center,
                    modifier = Modifier.fillMaxWidth() // Centré horizontalement
                )
+               Row (horizontalArrangement = Arrangement.SpaceBetween,
+                   modifier = Modifier.fillMaxWidth()
+               ){
+                   Button(
+                       onClick = { navigate(false) }, // Reculer
+                       enabled = allDate.indexOf(currentDate) > 0
+                   ){
+                       Text("jour Précédent")
+                   }
+                   Button(
+                       onClick = { navigate(true) }, // Avancer
+                       enabled = allDate.indexOf(currentDate) < allDate.size - 1
+                   ) {
+                       Text("Jour Suivant")
+                   }
+               }
+               Text(
+                   text = "Date actuelle : $currentDate",
+                   color = Color.Black,
+                   fontSize = 16.sp ,
+                   textAlign = TextAlign.Center
+               )
+
            }
        }
    }
