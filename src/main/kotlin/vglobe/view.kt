@@ -3,9 +3,10 @@ package vglobe
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.BottomDrawer
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Color
@@ -18,83 +19,160 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 
 
 @Composable
-fun HeaderWithImage(classementParDate:Map<String,List<skipper>>) {
+fun HeaderWithImage(classementParDate: Map<String, List<skipper>>) {
     val image: ImageBitmap = useResource("images/departVG.png") { loadImageBitmap(it) }
 
-    val allDate=classementParDate.keys.sorted()
-    val (currentDate,navigate)=dateNavigation(allDate)
-   Column(
-       modifier = Modifier.fillMaxSize()
-   ) {
-       Box(
-           modifier = Modifier
-               .fillMaxWidth()
-               .aspectRatio(image.width.toFloat() / image.height.toFloat())
-       ) {
+    val allDate = classementParDate.keys.sorted()
+    val (currentDate, navigate) = dateNavigation(allDate)
 
-           Image(
-               bitmap = image,
-               contentDescription = "Header Image",
-               contentScale = ContentScale.Crop,
-               modifier = Modifier.fillMaxWidth()
-                   .height(300.dp)
-           )
-           Text(
-               text = "Vendée Globe Classement",
-               color = Color.White,
-               fontSize = 20.sp,
-               textAlign = TextAlign.Center,
-               modifier = Modifier
-                   .padding(top = 16.dp)
-                   .align(Alignment.Center)
-           )
-       }
+    Column(modifier = Modifier.fillMaxSize()) {
+        // Image du haut avec superposition de texte
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(3f / 1f)
+        ) {
+            Image(
+                bitmap = image,
+                contentDescription = "Header Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f))
+            )
+            Text(
+                text = "Vendée Globe Classement",
+                color = Color.White,
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
 
-       Spacer(modifier = Modifier.height(5.dp)) // Espacement entre les blocs
+        // Section grisée modernisée
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    brush = androidx.compose.ui.graphics.Brush.verticalGradient(
+                        colors = listOf(Color.LightGray, Color.Gray)
+                    )
+                )
+                .padding(16.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Classement Vendée Globe 2024",
+                    color = Color.Black,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Classement du $currentDate",
+                    color = Color.DarkGray,
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(16.dp))
 
-       // Section grisée contenant le titre
-       Box(
-           modifier = Modifier
-               .fillMaxWidth()
-               .background(Color.LightGray)
-               .padding(16.dp) // Padding interne de la Box
-       ) {
-           Column(modifier = Modifier.fillMaxWidth()) {
-               Text(
-                   text = "Classement Vendée Globe 2024",
-                   color = Color.Black,
-                   fontSize = 20.sp,
-                   fontWeight = FontWeight.Bold,
-                   textAlign = TextAlign.Center,
-                   modifier = Modifier.fillMaxWidth() // Centré horizontalement
-               )
-               Row (horizontalArrangement = Arrangement.SpaceBetween,
-                   modifier = Modifier.fillMaxWidth()
-               ){
-                   Button(
-                       onClick = { navigate(false) }, // Reculer
-                       enabled = allDate.indexOf(currentDate) > 0
-                   ){
-                       Text("jour Précédent")
-                   }
-                   Button(
-                       onClick = { navigate(true) }, // Avancer
-                       enabled = allDate.indexOf(currentDate) < allDate.size - 1
-                   ) {
-                       Text("Jour Suivant")
-                   }
-               }
-               Text(
-                   text = "Date actuelle : $currentDate",
-                   color = Color.Black,
-                   fontSize = 16.sp ,
-                   textAlign = TextAlign.Center
-               )
+                // Navigation modernisée
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp)
+                ) {
+                    Button(
+                        onClick = { navigate(false) },
+                        enabled = allDate.indexOf(currentDate) > 0,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.White,
+                            contentColor = Color.Black
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Jour Précédent"
+                        )
+                        Text(
+                            text = "Précédent",
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
 
-           }
-       }
-   }
+                    Button(
+                        onClick = { navigate(true) },
+                        enabled = allDate.indexOf(currentDate) < allDate.size - 1,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.White,
+                            contentColor = Color.Black
+                        )
+                    ) {
+                        Text(
+                            text = "Suivant",
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Icon(
+                            imageVector = Icons.Filled.ArrowForward,
+                            contentDescription = "Jour Suivant"
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Liste des skippers pour le jour sélectionné
+        LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
+            val skippers = classementParDate[currentDate] ?: emptyList()
+            items(skippers) { skipper ->
+                detailSkipper(skipper)
+            }
+        }
+    }
 }
+
+
+@Composable
+fun detailSkipper(skipper: skipper) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        elevation = 4.dp,
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "${skipper.rank}. ${skipper.nom} (${skipper.nation})",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Bateau : ${skipper.bateau}", color = Color.Gray)
+            Text("Position : ${skipper.latitude} / ${skipper.longitude} | Vitesse : ${skipper.vitesse}", color = Color.Gray)
+            Text("Distance au leader : ${skipper.distanceToLeader} | Distance à l'arrivée : ${skipper.distanceToFinish}" , color = Color.Gray)
+        }
+    }
+}
+

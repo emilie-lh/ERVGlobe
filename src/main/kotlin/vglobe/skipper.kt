@@ -12,7 +12,9 @@ data class skipper(
     val bateau : String,
     val latitude: String,
     val longitude: String,
-    val vitesse: String
+    val vitesse: String,
+    val distanceToFinish: String,
+    val distanceToLeader: String
 )
 
 
@@ -42,7 +44,10 @@ fun extraireDonnees(dossierPath: String): Map<String, List<skipper>> {
         val jsonFile = fichier.readText()
 
         // Extraire la date du nom de fichier (format "YYYYMMDD")
-        val date = Regex("""\d{8}""").find(filePath)?.value ?: "unknown_date"
+        val date = Regex("""\d{8}""").find(filePath)?.value?.let {
+            "${it.substring(0, 4)}-${it.substring(4, 6)}-${it.substring(6, 8)}"
+        } ?: "unknown_date"
+
 
         // Définir un type pour la liste des skippers
         val skipperListType = object : TypeToken<List<Map<String, String>>>() {}.type
@@ -61,7 +66,9 @@ fun extraireDonnees(dossierPath: String): Map<String, List<skipper>> {
                     bateau = row["Skipper / Bateau"]?.split("\n")?.getOrNull(1) ?: "",
                     latitude = row["Latitude"] ?: row["Latitude\n"]?.let { remplacerSlash(it) } ?: "",
                     longitude = row["Longitude"] ?: row["Longitude\n"]?.let { remplacerSlash(it) } ?: "",
-                    vitesse = row["Vitesse"] ?: row["Vitesse\n"]?.let { remplacerSlash(it) } ?: ""
+                    vitesse = row["Vitesse"] ?: row["Vitesse\n"]?.let { remplacerSlash(it) } ?: "",
+                    distanceToFinish = row["DTF"] ?: row["DTF\n"]?.let { remplacerSlash(it) } ?: "",
+                    distanceToLeader = row["DTL"] ?: row["DTL\n"]?.let { remplacerSlash(it) } ?: ""
                 )
             } catch (e: Exception) {
                 println("Erreur lors du parsing d'une ligne dans $filePath : ${e.message}")
