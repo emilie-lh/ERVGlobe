@@ -36,7 +36,7 @@ fun HeaderWithImage(classementParDate: Map<String, List<skipper>>) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(3f / 1f)
+                .aspectRatio(5f / 1f)
         ) {
             Image(
                 bitmap = image,
@@ -161,6 +161,28 @@ fun detailSkipper(skipper: skipper) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
+
+                if (skipper.rank in 1..3) {
+                    val trophyIcon = when (skipper.rank) {
+                        1 -> useResource("images/trophe-or.png") { loadImageBitmap(it) }
+                        2 -> useResource("images/troper-argent.png") { loadImageBitmap(it) }
+                        3 -> useResource("images/tropher-bronze.png") { loadImageBitmap(it) }
+                        else -> null
+                    }
+
+                    trophyIcon?.let {
+                        Image(
+                            bitmap = it,
+                            contentDescription = "Trophée",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .padding(end = 8.dp)
+                        )
+                    }
+                } else {
+                    Spacer(modifier = Modifier.width(32.dp)) // Alignement pour les skippers sans trophée
+                }
+
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "${skipper.rank}. ${skipper.nom} (${skipper.nation})",
