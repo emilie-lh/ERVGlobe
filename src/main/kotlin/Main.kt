@@ -17,7 +17,8 @@ import vglobe.extraireDonnees
 @Composable
 @Preview
 fun App() {
-    val classementsParDate = remember { extraireDonnees("C:/Users/User/Documents/M1/IHM/Kotlin/ERVGlobe/src/main/resources/classement") }
+    val dossier = System.getProperty("user.dir") + "/src/main/resources/classement"
+    val classementsParDate = remember { extraireDonnees(dossier) }
 
     MaterialTheme {
         Column {
@@ -29,10 +30,6 @@ fun App() {
 
 fun main() = application {
     Window(onCloseRequest = ::exitApplication, title = "ERVGLobe") {
-        /*val dossierPath = //"C:/Users/mimie/IdeaProjects/ERVGLobe/src/main/resources/classement"
-            javaClass.getResource("/classement")?.path ?: throw IllegalArgumentException("Le dossier 'classement' est introuvable dans les ressources.")
-        // Étape 1 : Extraire les données
-        val classementsParDate = extraireDonnees(dossierPath)*/
         App()
     }
 }
