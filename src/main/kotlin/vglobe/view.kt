@@ -152,6 +152,18 @@ fun HeaderWithImage(classementParDate: Map<String, List<skipper>>) {
 
 @Composable
 fun detailSkipper(skipper: skipper) {
+    val flags = mapOf(
+        "FRA" to "images/FRA.png",
+        "GBR" to "images/GBR.png",
+        "SUI" to "images/SUI.png",
+        "GER" to "images/GER.png",
+        "ITA" to "images/ITA.png",
+        "JPN" to "images/JPN.png",
+        "NZL" to "images/NZL.png",
+        "BEL" to "images/BEL.png",
+        "CHN" to "images/CHI.png",
+        "HUN" to "images/HUN.png"
+    )
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -184,8 +196,21 @@ fun detailSkipper(skipper: skipper) {
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
+                // Affichage du drapeau au lieu de la nation
+                val flagResource = flags[skipper.nation]
+                flagResource?.let {
+                    val flagImage: ImageBitmap = useResource(it) { loadImageBitmap(it) }
+                    Image(
+                        bitmap = flagImage,
+                        contentDescription = "Drapeau ${skipper.nation}",
+                        modifier = Modifier
+                            .size(30.dp)
+                            .padding(end = 8.dp)
+                    )
+                }
+
                 Text(
-                    text = "${skipper.rank}. ${skipper.nom} (${skipper.nation})",
+                    text = "${skipper.rank}. ${skipper.nom}",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
