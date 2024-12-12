@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import vglobe.HeaderWithImage
+import vglobe.LoadPage
 import vglobe.extraireDonnees
 
 @Composable
@@ -16,7 +16,7 @@ fun App() {
 
     MaterialTheme {
         Column {
-            HeaderWithImage(classementsParDate)
+            LoadPage(classementsParDate)
 
         }
     }

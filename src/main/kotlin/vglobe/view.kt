@@ -23,16 +23,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 
-
+/*
+    * Affiche la page principale de l'application.
+    * Cette page affiche le classement du Vendée Globe par date.
+    * Elle permet de naviguer entre les dates pour afficher le classement correspondant.
+ */
 @Composable
-fun HeaderWithImage(classementParDate: Map<String, List<skipper>>) {
+fun LoadPage(classementParDate: Map<String, List<skipper>>) {
     val image: ImageBitmap = useResource("images/departVG.png") { loadImageBitmap(it) }
 
     val allDate = classementParDate.keys.sorted()
     val (currentDate, navigate) = dateNavigation(allDate)
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // Image du haut avec superposition de texte
+
+        // Header avec l'image de départ du Vendée Globe
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -58,7 +63,7 @@ fun HeaderWithImage(classementParDate: Map<String, List<skipper>>) {
             )
         }
 
-        // Section grisée modernisée
+        // Section grisée permettant de naviguer entre les dates
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -90,7 +95,7 @@ fun HeaderWithImage(classementParDate: Map<String, List<skipper>>) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Navigation modernisée
+
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
@@ -149,9 +154,14 @@ fun HeaderWithImage(classementParDate: Map<String, List<skipper>>) {
     }
 }
 
-
+/*
+    * Affiche les détails d'un skipper.
+    * Les détails affichés sont le nom, le bateau, la position, la vitesse, la distance au leader et la distance à l'arrivée.
+ */
 @Composable
 fun detailSkipper(skipper: skipper) {
+
+    //Affectation des drapeaux selon le pays
     val flags = mapOf(
         "FRA" to "images/FRA.png",
         "GBR" to "images/GBR.png",
@@ -164,6 +174,8 @@ fun detailSkipper(skipper: skipper) {
         "CHN" to "images/CHI.png",
         "HUN" to "images/HUN.png"
     )
+
+    //Création de la carte pour chaque skipper
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -174,6 +186,7 @@ fun detailSkipper(skipper: skipper) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
 
+                //Affichage des trophées pour les 3 premiers skippers
                 if (skipper.rank in 1..3) {
                     val trophyIcon = when (skipper.rank) {
                         1 -> useResource("images/trophe-or.png") { loadImageBitmap(it) }
@@ -196,8 +209,16 @@ fun detailSkipper(skipper: skipper) {
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
-                // Affichage du drapeau au lieu de la nation
+
                 val flagResource = flags[skipper.nation]
+
+                Text(
+                    text = "${skipper.rank}. ${skipper.nom}  ",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+
+                //Affichage du drapeau en fonction de la nation du skipper
                 flagResource?.let {
                     val flagImage: ImageBitmap = useResource(it) { loadImageBitmap(it) }
                     Image(
@@ -208,14 +229,10 @@ fun detailSkipper(skipper: skipper) {
                             .padding(end = 8.dp)
                     )
                 }
-
-                Text(
-                    text = "${skipper.rank}. ${skipper.nom}",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
             }
             Spacer(modifier = Modifier.height(8.dp))
+
+            //Affichage des informations du skipper
             Text("Bateau : ${skipper.bateau}", color = Color.Gray)
             Text("Position : ${skipper.latitude} / ${skipper.longitude} | Vitesse : ${skipper.vitesse}", color = Color.Gray)
             Text("Distance au leader : ${skipper.distanceToLeader} | Distance à l'arrivée : ${skipper.distanceToFinish}" , color = Color.Gray)

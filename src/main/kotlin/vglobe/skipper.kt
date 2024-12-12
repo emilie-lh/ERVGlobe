@@ -4,6 +4,20 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
 
+/*
+    * Cette classe représente un skipper.
+    * Elle contient les informations suivantes :
+    * - date : la date du classement
+    * - rank : le rang du skipper
+    * - nation : la nation du skipper
+    * - nom : le nom du skipper
+    * - bateau : le nom du bateau du skipper
+    * - latitude : la latitude du skipper
+    * - longitude : la longitude du skipper
+    * - vitesse : la vitesse du skipper
+    * - distanceToFinish : la distance restante pour finir la course
+    * - distanceToLeader : la distance par rapport au leader
+ */
 data class skipper(
     val date : String,
     val rank: Int,
@@ -17,12 +31,20 @@ data class skipper(
     val distanceToLeader: String
 )
 
-
+/*
+    * Cette fonction sert à remplacer les caractères spéciaux dans les données.
+    * Elle retourne une chaîne de caractères sans les caractères spéciaux.
+    * Cette fonction a été créée au cas où les données contiennent des caractères spéciaux.
+ */
 fun remplacerSlash(value: String?): String {
     return value?.replace("\n", "")?.trim() ?: ""
 }
 
-// Fonction pour extraire les données des fichiers JSON
+/*
+    * Cette fonction sert à extraire les données des fichiers JSON issues d'un dossier.
+    * Elle retourne un Map<String, List<skipper>> où la clé
+    * est la date du classement et la valeur est la liste des skippers.
+ */
 fun extraireDonnees(dossierPath: String): Map<String, List<skipper>> {
     val gson = Gson()
 
@@ -31,6 +53,7 @@ fun extraireDonnees(dossierPath: String): Map<String, List<skipper>> {
         file.extension == "json"
     } ?: emptyArray()
 
+    // Si aucun fichier n'est trouvé, afficher un message et retourner une map vide
     if (fichiersJson.isEmpty()) {
         println("Aucun fichier JSON trouvé dans le dossier : $dossierPath")
         return emptyMap()
@@ -39,17 +62,16 @@ fun extraireDonnees(dossierPath: String): Map<String, List<skipper>> {
     // Stocker les classements par date
     val classementsSkipperDate = mutableMapOf<String, List<skipper>>()
 
+    // Parcourir les fichiers JSON
     fichiersJson.forEach { fichier ->
         val filePath = fichier.absolutePath
         val jsonFile = fichier.readText()
 
-        // Extraire la date du nom de fichier (format "YYYYMMDD")
+        // Extraction de la date du fichier
         val date = Regex("""\d{8}""").find(filePath)?.value?.let {
             "${it.substring(0, 4)}-${it.substring(4, 6)}-${it.substring(6, 8)}"
         } ?: "unknown_date"
 
-
-        // Définir un type pour la liste des skippers
         val skipperListType = object : TypeToken<List<Map<String, String>>>() {}.type
 
         // Parser les données en une liste de Map<String, String>
@@ -74,26 +96,10 @@ fun extraireDonnees(dossierPath: String): Map<String, List<skipper>> {
                 println("Erreur lors du parsing d'une ligne dans $filePath : ${e.message}")
                 null
             }
-        }.filter { it.rank > 0 } // Filtrer les entrées valides
+        }.filter { it.rank > 0 }
 
         classementsSkipperDate[date] = skippers
     }
 
     return classementsSkipperDate
-}
-
-// Fonction pour afficher les données
-fun afficherClassement(classementsParDate: Map<String, List<skipper>>) {
-    if (classementsParDate.isEmpty()) {
-        println("Aucun classement disponible.")
-        return
-    }
-
-    classementsParDate.forEach { (date, skippers) ->
-        println("Classement pour la date : $date\n")
-        skippers.sortedBy { it.rank }.forEach {
-            println("${it.rank}. ${it.nom} (${it.nation}) - ${it.bateau} - ${it.latitude} / ${it.longitude} - ${it.vitesse}")
-        }
-        println("\n---\n")
-    }
 }
